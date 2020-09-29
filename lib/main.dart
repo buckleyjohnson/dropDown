@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
 ///todo: calculate positions based on screen size
    Map _positions = Map<int, double>();//todo: autofill these vals depending on screen size/ number of boxes
 
-  int _column0Boxes = 0;
+  int _numberOfColumn0Boxes = 0;
   int _numberOfBoxes = 20;
   int _currentBox = 0;
   bool _initialized = false;
@@ -101,34 +101,46 @@ class _HomeState extends State<Home> {
   return new Timer(duration, dropBox);
   }
 
+
+
+
+
+
+
+  int getHighestPosition(Map theMap, int currentBox){
+    var highestPosition = 0;   // for 1st box should be 0
+    theMap.forEach((key, value) {
+      print("$key = $value");
+      if (highestPosition <= value){
+        highestPosition = value+1;
+      }
+    });
+    return highestPosition;
+  }
   void dropBox() {
     setState(() {
       print("setState currentBox= $_currentBox");
 
-      if (_currentBox == 0 ||_currentBox == 4 ||_currentBox == 8 ||_currentBox == 12 ) {
-        var highestPosition = 0;   // for 1st box should be 0
-        _boxCurrentPositionsCol0.forEach((key, value) {
-          print("$key = $value");
-          if (highestPosition <= value){
-            highestPosition = value+1;
-          }
-        });
 
+
+
+      if (_currentBox == 0 ||_currentBox == 4 ||_currentBox == 8 ||_currentBox == 12 ) {
+        int highestPosition = getHighestPosition(_boxCurrentPositionsCol0, _currentBox);
         _boxCurrentPositionsCol0[_currentBox] = highestPosition;
       }
 
 
 
-      colorZero = Colors.red;
+
       _boxColors[_currentBox] = Colors.blue;
       int num = _currentBox ~/4;
       var offset = (_boxHeight * num) + _boxHeight;
       print("offset-$offset num - $num");
-      if ( _boxTops[_currentBox] == 20.0){
+      if ( _boxTops[_currentBox] == 20.0){    //this
         //if its col 0 then add to col0boxes.
       if (_currentBox == 0 ||_currentBox == 4 ||_currentBox == 8 ||_currentBox == 12 ) {
-         offset = (_boxHeight * _column0Boxes) + _boxHeight;
-        _column0Boxes++;
+         offset = (_boxHeight * _numberOfColumn0Boxes) + _boxHeight;
+        _numberOfColumn0Boxes++;
       }
 
 
@@ -170,7 +182,7 @@ class _HomeState extends State<Home> {
     print("in build _positions =_- $_positions");
     print("in build _boxLefts =_- $_boxLefts");
 
-
+    final int dropDuration = 8;
 
     print("wid = $_boxWidth");
     print("_stackHeight = $_stackHeight");
@@ -183,7 +195,7 @@ class _HomeState extends State<Home> {
           child: Stack(
             children: <Widget>[
               AnimatedPositioned(
-                duration: const Duration(seconds: 2),
+                duration:  Duration(seconds: dropDuration),
                 curve: Curves.linear,
                 left: _boxLefts[0],
                 top: _boxTops[0],
@@ -191,7 +203,7 @@ class _HomeState extends State<Home> {
                 width: displayWidth(context) * 0.25,
                 child: GestureDetector(
                   onTap: (){
-                    this._unsetBox(context, 0);
+                    this._unsetBox(context, 0, dropDuration);
                   },
                   child: Container(
                     color: _boxColors[0],
@@ -199,7 +211,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               AnimatedPositioned(
-                duration: const Duration(seconds: 4),
+                duration:  Duration(seconds: dropDuration),
                 curve: Curves.linear,
                 left:  _boxLefts[1],
                 top: _boxTops[1],
@@ -207,7 +219,7 @@ class _HomeState extends State<Home> {
                 height: _boxHeight,
                 child: GestureDetector(
                   onTap: (){
-                  this._unsetBox(context, 1);
+                  this._unsetBox(context, 1, dropDuration);
                   },
                   child: Container(
                     color: _boxColors[1],
@@ -215,29 +227,39 @@ class _HomeState extends State<Home> {
                 ),
               ),
               AnimatedPositioned(
-                duration: const Duration(seconds: 4),
+                duration:  Duration(seconds: dropDuration),
                 curve: Curves.linear,
                 left:  _boxLefts[2],
                 top: _boxTops[2],
                 width: displayWidth(context) * 0.25,
                 height: _boxHeight,
-                child: Container(
-                  color: _boxColors[2],
+                child: GestureDetector(
+                  onTap: (){
+                    this._unsetBox(context, 2, dropDuration);
+                  },
+                  child: Container(
+                    color: _boxColors[2],
+                  ),
                 ),
               ),
               AnimatedPositioned(
-                duration: const Duration(seconds: 4),
+                duration:  Duration(seconds: dropDuration),
                 curve: Curves.linear,
                 left:  _boxLefts[3],
                 top: _boxTops[3],
                 width: displayWidth(context) * 0.25,
                 height: _boxHeight,
-                child: Container(
-                  color: _boxColors[3],
+                child: GestureDetector(
+                  onTap: (){
+                    this._unsetBox(context, 3, dropDuration);
+                  },
+                  child: Container(
+                    color: _boxColors[3],
+                  ),
                 ),
               ),
               AnimatedPositioned(
-                duration: const Duration(seconds: 2),
+                duration: Duration(seconds: dropDuration),
                 curve: Curves.linear,
                 left:  _boxLefts[0],
                 top: _boxTops[4],
@@ -245,7 +267,7 @@ class _HomeState extends State<Home> {
                 height: _boxHeight,
                 child: GestureDetector(
                   onTap: (){
-                    this._unsetBox(context, 4);
+                    this._unsetBox(context, 4, dropDuration);
                   },
                   child: Container(
                     color: _boxColors[4],
@@ -253,20 +275,25 @@ class _HomeState extends State<Home> {
                 ),
               ),
               AnimatedPositioned(
-                duration: const Duration(seconds: 4),
+                duration:  Duration(seconds: dropDuration),
                 curve: Curves.linear,
                 left:  _boxLefts[1],
                 top: _boxTops[5],
                 width: displayWidth(context) * 0.25,
                 height: _boxHeight,
-                child: Container(
-                  color: _boxColors[5],
+                child: GestureDetector(
+                  onTap: (){
+                    this._unsetBox(context, 5, dropDuration);
+                  },
+                  child: Container(
+                    color: _boxColors[5],
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 0,),
+        SizedBox(height: 10,),
         Row(
           children: [
             Container(
@@ -521,8 +548,19 @@ class _HomeState extends State<Home> {
       });
 
 */
-  void _unsetBox(BuildContext context, int boxNum) {
-    print(".....................unsetBox");
+
+  List getListToDecrement(Map theMap, int positionOfRemovedElement){
+
+    var highestPosition = 0;
+    var listToDecrement = [];
+    theMap.forEach((key, value) {
+      print("for each $key = $value");
+      if (value > positionOfRemovedElement){
+        listToDecrement.add(key);
+      }
+    });
+  }
+  void _unsetBox(BuildContext context, int boxNum, int dropDuration) {
   // Flushbar(
   //   title:  "Dead On",
   //   message:  "You're as smart as a chimp!",
@@ -538,15 +576,7 @@ class _HomeState extends State<Home> {
     _boxCurrentPositionsCol0.remove(boxNum);    //remove current box and decrement all higher positions
 
     print("current=$_boxCurrentPositionsCol0");
-
-    var highestPosition = 0;
-    var listToDecrement = [];
-    _boxCurrentPositionsCol0.forEach((key, value) {
-      print("for each $key = $value");
-      if (value > positionOfRemovedElement){
-        listToDecrement.add(key);
-      }
-    });
+    List listToDecrement = getListToDecrement(_boxCurrentPositionsCol0, positionOfRemovedElement);
     print("list=$listToDecrement");
 
 
@@ -577,6 +607,7 @@ class _HomeState extends State<Home> {
           highestPosition = value+1;
         }
       });
+
       print("highestPosition=$highestPosition");        // get highest position
 
       print("_boxCurrentPositionsCol0   $_boxCurrentPositionsCol0");
@@ -591,11 +622,10 @@ class _HomeState extends State<Home> {
   });  //end setState
   //
   print('1');
-  Future.delayed(const Duration(seconds: 2), () {
-    print('Hello, _restartDropDown');
+  Future.delayed(Duration(seconds: dropDuration), () {
     _restartDropDown(boxNum);
   });
-  print('2');
+
 
   }
 
@@ -603,16 +633,13 @@ class _HomeState extends State<Home> {
 
     //change position of
     //set color to transparant
-    setState(() {print("_restartDropDown the boxnum = $boxNum");
+    setState(() {
 
     if (_boxCurrentPositionsCol0.length == 1){  //todo: this is a hack
       _boxCurrentPositionsCol0[boxNum] = 0;
     }
 
-    print("positions = $_positions");
     _boxTops[boxNum] = _positions[_boxCurrentPositionsCol0[boxNum]]; //set position of this BoxNum
-    print("boxNum---$boxNum");
-    print("_boxCurrentPositionsCol0---$_boxCurrentPositionsCol0");
     print(_positions[_boxCurrentPositionsCol0[boxNum]]);
 
     _boxColors[boxNum] = Colors.blue;

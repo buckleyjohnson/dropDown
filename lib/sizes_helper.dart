@@ -16,7 +16,6 @@ double displayWidth(BuildContext context) {
 }
 
 double getBoxWidth(BuildContext context) {
-  print("geBoxW");
   int wInt = MediaQuery.of(context).size.width ~/4;
   return wInt.toDouble();
 }

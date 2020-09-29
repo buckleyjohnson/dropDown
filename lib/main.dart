@@ -68,14 +68,13 @@ class _HomeState extends State<Home> {
     // double _width = size;
     super.initState();
     if (!_initialized) {
-      print("initing....");
       _initialized = true;
       WidgetsBinding.instance
           .addPostFrameCallback((_) => initiliazeVariables());
     }
   }
 
-  Map getPositions(BuildContext context){print("get positions");
+  Map getPositions(BuildContext context){
 
     int wInt = MediaQuery.of(context).size.width ~/4;
     _boxWidth = wInt.toDouble();
@@ -91,12 +90,11 @@ class _HomeState extends State<Home> {
   }
 
   void initiliazeVariables() {
-    print("initiliazeVariables");
 
 
     startTimeout(1);
   }
-  startTimeout(int seconds) {print("startTimeout");//wait a few secs then drop first box
+  startTimeout(int seconds) {//wait a few secs then drop first box
   var duration = Duration(seconds: seconds);
   return new Timer(duration, dropBox);
   }
@@ -110,7 +108,6 @@ class _HomeState extends State<Home> {
   int getHighestPosition(Map theMap, int currentBox){
     var highestPosition = 0;   // for 1st box should be 0
     theMap.forEach((key, value) {
-      print("$key = $value");
       if (highestPosition <= value){
         highestPosition = value+1;
       }
@@ -119,23 +116,15 @@ class _HomeState extends State<Home> {
   }
   void dropBox() {
     setState(() {
-      print("setState currentBox= $_currentBox");
-
-
-
 
       if (_currentBox == 0 ||_currentBox == 4 ||_currentBox == 8 ||_currentBox == 12 ) {
         int highestPosition = getHighestPosition(_boxCurrentPositionsCol0, _currentBox);
         _boxCurrentPositionsCol0[_currentBox] = highestPosition;
       }
 
-
-
-
       _boxColors[_currentBox] = Colors.blue;
       int num = _currentBox ~/4;
       var offset = (_boxHeight * num) + _boxHeight;
-      print("offset-$offset num - $num");
       if ( _boxTops[_currentBox] == 20.0){    //this
         //if its col 0 then add to col0boxes.
       if (_currentBox == 0 ||_currentBox == 4 ||_currentBox == 8 ||_currentBox == 12 ) {
@@ -145,7 +134,6 @@ class _HomeState extends State<Home> {
 
 
       _boxTops[_currentBox] = _stackHeight - offset;
-      print("boxTops  ==  $_boxTops");
         //_top = 393;
         // _bottom = 20;
       }
@@ -179,13 +167,9 @@ class _HomeState extends State<Home> {
     if (_positions == null || _positions.isEmpty) {
       _positions = getPositions(context);
     }
-    print("in build _positions =_- $_positions");
-    print("in build _boxLefts =_- $_boxLefts");
 
     final int dropDuration = 8;
 
-    print("wid = $_boxWidth");
-    print("_stackHeight = $_stackHeight");
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -554,7 +538,6 @@ class _HomeState extends State<Home> {
     var highestPosition = 0;
     var listToDecrement = [];
     theMap.forEach((key, value) {
-      print("for each $key = $value");
       if (value > positionOfRemovedElement){
         listToDecrement.add(key);
       }
@@ -567,52 +550,46 @@ class _HomeState extends State<Home> {
   //   duration:  Duration(milliseconds: 700),
   // )..show(context);
   setState(() {
+    print("unset box#-$boxNum");
     _boxTops[boxNum] = 20.0;
     _boxColors[boxNum] = Colors.black26;
 
-    print("boxnum == $boxNum");
-    print("current=$_boxCurrentPositionsCol0");
     int positionOfRemovedElement = _boxCurrentPositionsCol0[boxNum];
+    print("positionOfRemovedElement= $positionOfRemovedElement");
     _boxCurrentPositionsCol0.remove(boxNum);    //remove current box and decrement all higher positions
 
-    print("current=$_boxCurrentPositionsCol0");
     List listToDecrement = getListToDecrement(_boxCurrentPositionsCol0, positionOfRemovedElement);
-    print("list=$listToDecrement");
+
+    if (listToDecrement != null) {
+      listToDecrement.forEach((element) { //boxOrders is box# : position
+        _boxCurrentPositionsCol0[element] =
+            _boxCurrentPositionsCol0[element] - 1;
+        if (_boxCurrentPositionsCol0[element] < 0) {
+          _boxCurrentPositionsCol0[element] = 0;
+        }
+      });
+    }
 
 
-    listToDecrement.forEach((element) {//boxOrders is box# : position
-      print("current $_boxCurrentPositionsCol0");
-      _boxCurrentPositionsCol0[element] = _boxCurrentPositionsCol0[element] -1;
-      if (_boxCurrentPositionsCol0[element] < 0){
-        _boxCurrentPositionsCol0[element] = 0;
-      }
-    });
-
-    print("current b4 setting $_boxCurrentPositionsCol0");
-    print("_boxTops b4 setting $_boxTops");
-    _boxCurrentPositionsCol0.forEach((key, value) { 
+    print("_boxCurrentPositionsCol0 =  $_boxCurrentPositionsCol0");
+    _boxCurrentPositionsCol0.forEach((key, value) {
       _boxTops[key] = _positions[value];
     });
 
-    print("_boxTops b4 setting $_boxTops");
 
 
-    print("current=$_boxCurrentPositionsCol0");
 
     if (boxNum == 0 ||boxNum == 4 ||boxNum == 8 ||boxNum == 12 ) {
       var highestPosition = 1;   // for 1st box should be 0
       _boxCurrentPositionsCol0.forEach((key, value) {
-        print("$key = $value");
         if (value > highestPosition){
           highestPosition = value+1;
         }
       });
 
-      print("highestPosition=$highestPosition");        // get highest position
-
-      print("_boxCurrentPositionsCol0   $_boxCurrentPositionsCol0");
+print("highestPosition - $highestPosition");
       _boxCurrentPositionsCol0[boxNum] = highestPosition;//1:0, 0:1position
-      print("_boxCurrentPositionsCol0   $_boxCurrentPositionsCol0");
+
     }
 
     //are there other boxes in this column?  then drop them down 1 level.
@@ -621,7 +598,6 @@ class _HomeState extends State<Home> {
 
   });  //end setState
   //
-  print('1');
   Future.delayed(Duration(seconds: dropDuration), () {
     _restartDropDown(boxNum);
   });
@@ -634,13 +610,12 @@ class _HomeState extends State<Home> {
     //change position of
     //set color to transparant
     setState(() {
-
+    print("_boxCurrentPositionsCol0 = $_boxCurrentPositionsCol0");
     if (_boxCurrentPositionsCol0.length == 1){  //todo: this is a hack
       _boxCurrentPositionsCol0[boxNum] = 0;
     }
 
     _boxTops[boxNum] = _positions[_boxCurrentPositionsCol0[boxNum]]; //set position of this BoxNum
-    print(_positions[_boxCurrentPositionsCol0[boxNum]]);
 
     _boxColors[boxNum] = Colors.blue;
     if (boxNum == 0) {
